@@ -2,6 +2,7 @@ package com.krld.flashlight;
 
 import android.app.Activity;
 import android.graphics.SurfaceTexture;
+import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,6 +14,8 @@ import java.io.IOException;
 public class FlashlightActivity extends Activity {
     private ImageButton onOffButton;
     private static Camera cam;
+    private Drawable buttonOffImg;
+    private Drawable buttonOnImg;
 
     /**
      * Called when the activity is first created.
@@ -33,6 +36,9 @@ public class FlashlightActivity extends Activity {
                 turnOnOffLight();
             }
         });
+
+        buttonOffImg = getResources().getDrawable(R.drawable.hqicon_dark);
+        buttonOnImg = getResources().getDrawable(R.drawable.hqicon);
     }
 
     private void turnOnOffLight() {
@@ -40,14 +46,32 @@ public class FlashlightActivity extends Activity {
             errorMessage("No flashlight");
         }
         if (isCameraOff()) {
-            try {
-                turnCameraOn();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            turnOnButtonImg();
+            Thread tmpThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        turnCameraOn();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            tmpThread.start();
+
         } else {
             turnCameraOff();
+            updateButtonBackground();
         }
+
+    }
+
+    private void turnOffButtonImg() {
+        onOffButton.setBackground(buttonOffImg);
+    }
+
+    private void turnOnButtonImg() {
+        onOffButton.setBackground(buttonOnImg);
     }
 
     private void turnCameraOff() {
@@ -79,5 +103,21 @@ public class FlashlightActivity extends Activity {
     private boolean systemHasFlashLight() {
         //TODO
         return true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateButtonBackground();
+    }
+
+    private void updateButtonBackground() {
+        Drawable drawableImage;
+        if (isCameraOff()) {
+            drawableImage = buttonOffImg;
+        } else {
+            drawableImage = buttonOnImg;
+        }
+        onOffButton.setBackground(drawableImage);
     }
 }
