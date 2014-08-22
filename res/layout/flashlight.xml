@@ -12,7 +12,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/onoff_button" android:layout_gravity="center"
                 android:focusableInTouchMode="false" android:layout_margin="0px"
-                android:padding="100dp" android:background="@drawable/hqicon" android:clickable="false"
+                android:padding="80dp" android:background="@drawable/hqicon" android:clickable="false"
                 android:layout_centerInParent="true"/>
     </RelativeLayout>
 </LinearLayout>
