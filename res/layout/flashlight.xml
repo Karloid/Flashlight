@@ -4,11 +4,16 @@
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
         >
-    <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/onoff_button" android:layout_gravity="center"
-            android:src="@drawable/hqicon" android:focusableInTouchMode="false" android:layout_margin="100px"
-            android:padding="100px"/>
+    <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+        <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/onoff_button" android:layout_gravity="center"
+                android:focusableInTouchMode="false" android:layout_margin="0px"
+                android:padding="100dp" android:background="@drawable/hqicon" android:clickable="false"
+                android:layout_centerInParent="true"/>
+    </RelativeLayout>
 </LinearLayout>
 
