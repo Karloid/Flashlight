@@ -46,7 +46,6 @@ public class FlashlightActivity extends Activity {
             errorMessage("No flashlight");
         }
         if (isCameraOff()) {
-            turnOnButtonImg();
             Thread tmpThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -57,7 +56,14 @@ public class FlashlightActivity extends Activity {
                     }
                 }
             });
+            // dirt hack wait until flash turn on
             tmpThread.start();
+            try {
+                Thread.sleep(300);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            turnOnButtonImg();
 
         } else {
             turnCameraOff();
