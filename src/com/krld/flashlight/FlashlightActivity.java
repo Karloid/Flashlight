@@ -1,10 +1,14 @@
 package com.krld.flashlight;
 
 import android.app.Activity;
+import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+
+import java.io.IOException;
 
 public class FlashlightActivity extends Activity {
     private ImageButton onOffButton;
@@ -36,7 +40,11 @@ public class FlashlightActivity extends Activity {
             errorMessage("No flashlight");
         }
         if (isCameraOff()) {
-            turnCameraOn();
+            try {
+                turnCameraOn();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } else {
             turnCameraOff();
         }
@@ -48,8 +56,12 @@ public class FlashlightActivity extends Activity {
         cam = null;
     }
 
-    private void turnCameraOn() {
+    private void turnCameraOn() throws IOException {
         cam = Camera.open();
+
+        if (Build.VERSION.SDK_INT >= 11) {     //honeycomb req for nexus 5
+            cam.setPreviewTexture(new SurfaceTexture(0));
+        }
         Camera.Parameters p = cam.getParameters();
         p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
         cam.setParameters(p);
@@ -61,7 +73,7 @@ public class FlashlightActivity extends Activity {
     }
 
     private void errorMessage(String message) {
-         //TODO
+        //TODO
     }
 
     private boolean systemHasFlashLight() {
