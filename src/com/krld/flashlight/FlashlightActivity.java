@@ -3,6 +3,7 @@ package com.krld.flashlight;
 import android.app.Activity;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,6 +13,8 @@ import android.widget.ImageButton;
 import java.io.IOException;
 
 public class FlashlightActivity extends Activity {
+    public static final int CROSSFADE_DURATION_MILLIS = 400;
+    public static final int CROSSFADE_DURATION_SHORT = 0;
     private ImageButton onOffButton;
     private static Camera cam;
     private Drawable buttonOffImg;
@@ -59,7 +62,7 @@ public class FlashlightActivity extends Activity {
             // dirt hack wait until flash turn on
             tmpThread.start();
             try {
-                Thread.sleep(300);
+                Thread.sleep(0);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -67,17 +70,19 @@ public class FlashlightActivity extends Activity {
 
         } else {
             turnCameraOff();
-            updateButtonBackground();
+            turnOffButtonImg();
         }
 
     }
 
     private void turnOffButtonImg() {
-        onOffButton.setBackground(buttonOffImg);
+        TransitionDrawable drawable = (TransitionDrawable) onOffButton.getDrawable();
+        drawable.reverseTransition(CROSSFADE_DURATION_MILLIS);
     }
 
     private void turnOnButtonImg() {
-        onOffButton.setBackground(buttonOnImg);
+        TransitionDrawable drawable = (TransitionDrawable) onOffButton.getDrawable();
+        drawable.startTransition(CROSSFADE_DURATION_MILLIS);
     }
 
     private void turnCameraOff() {
@@ -114,16 +119,15 @@ public class FlashlightActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        updateButtonBackground();
+       // updateButtonDrawable();
     }
 
-    private void updateButtonBackground() {
-        Drawable drawableImage;
+    private void updateButtonDrawable() {
+        TransitionDrawable drawable = (TransitionDrawable) onOffButton.getDrawable();
         if (isCameraOff()) {
-            drawableImage = buttonOffImg;
+            drawable.reverseTransition(CROSSFADE_DURATION_SHORT);
         } else {
-            drawableImage = buttonOnImg;
+            drawable.startTransition(CROSSFADE_DURATION_SHORT);
         }
-        onOffButton.setBackground(drawableImage);
     }
 }
