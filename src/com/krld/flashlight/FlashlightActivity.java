@@ -53,7 +53,7 @@ public class FlashlightActivity extends Activity {
                 @Override
                 public void run() {
                     try {
-                        turnCameraOn();
+                        turnFlashOn();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -69,7 +69,7 @@ public class FlashlightActivity extends Activity {
             turnOnButtonImg();
 
         } else {
-            turnCameraOff();
+            turnFlashOff();
             turnOffButtonImg();
         }
 
@@ -85,13 +85,13 @@ public class FlashlightActivity extends Activity {
         drawable.startTransition(CROSSFADE_DURATION_MILLIS);
     }
 
-    private void turnCameraOff() {
+    private void turnFlashOff() {
         cam.stopPreview();
         cam.release();
         cam = null;
     }
 
-    private void turnCameraOn() throws IOException {
+    private void turnFlashOn() throws IOException {
         cam = Camera.open();
 
         if (Build.VERSION.SDK_INT >= 11) {     //honeycomb req for nexus 5
