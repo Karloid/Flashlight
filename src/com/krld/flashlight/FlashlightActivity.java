@@ -1,16 +1,20 @@
 package com.krld.flashlight;
 
 import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.List;
 
 public class FlashlightActivity extends Activity {
     public static final int CROSSFADE_DURATION_MILLIS = 400;
@@ -46,7 +50,8 @@ public class FlashlightActivity extends Activity {
 
     private synchronized void turnOnOffLight() {
         if (!systemHasFlashLight()) {
-            errorMessage("No flashlight");
+            errorMessage(getResources().getString(R.string.no_flash));
+            return;
         }
         if (isCameraOff()) {
             Thread tmpThread = new Thread(new Runnable() {
@@ -126,11 +131,30 @@ public class FlashlightActivity extends Activity {
     }
 
     private void errorMessage(String message) {
-        //TODO
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
     }
 
     private boolean systemHasFlashLight() {
-        //TODO
+        PackageManager pm = getPackageManager();
+        if (!pm.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+            Log.e("err", "Device has no camera!");
+            return false;
+        }
+        Camera camera = Camera.open();
+        if (camera == null) {
+            return false;
+        }
+        Camera.Parameters parameters = camera.getParameters();
+
+        if (parameters.getFlashMode() == null) {
+            return false;
+        }
+
+        List<String> supportedFlashModes = parameters.getSupportedFlashModes();
+        if (supportedFlashModes == null || supportedFlashModes.isEmpty() || supportedFlashModes.size() == 1
+                && supportedFlashModes.get(0).equals(Camera.Parameters.FLASH_MODE_OFF)) {
+            return false;
+        }
         return true;
     }
 
