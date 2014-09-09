@@ -44,7 +44,7 @@ public class FlashlightActivity extends Activity {
         buttonOnImg = getResources().getDrawable(R.drawable.hqicon);
     }
 
-    private void turnOnOffLight() {
+    private synchronized void turnOnOffLight() {
         if (!systemHasFlashLight()) {
             errorMessage("No flashlight");
         }
@@ -91,9 +91,27 @@ public class FlashlightActivity extends Activity {
         cam = null;
     }
 
-    private void turnFlashOn() throws IOException {
-        cam = Camera.open();
-
+    private synchronized void turnFlashOn() throws IOException {
+        boolean notConnected = true;
+        int count = 0;
+        int maxCount = 10;
+        while (notConnected) {
+            try {
+                count++;
+                if (count > maxCount) {
+                    return;
+                }
+                cam = Camera.open();
+            } catch (Exception e) {
+                try {
+                    Thread.sleep(50);
+                    continue;
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            }
+            notConnected = false;
+        }
         if (Build.VERSION.SDK_INT >= 11) {     //honeycomb req for nexus 5
             cam.setPreviewTexture(new SurfaceTexture(0));
         }
@@ -119,7 +137,7 @@ public class FlashlightActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-       // updateButtonDrawable();
+        // updateButtonDrawable();
     }
 
     private void updateButtonDrawable() {
