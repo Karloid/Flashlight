@@ -49,11 +49,12 @@ public class FlashlightActivity extends Activity {
     }
 
     private synchronized void turnOnOffLight() {
-        if (!systemHasFlashLight()) {
-            errorMessage(getResources().getString(R.string.no_flash));
-            return;
-        }
+
         if (isCameraOff()) {
+            if (!systemHasFlashLight()) {
+                errorMessage(getResources().getString(R.string.no_flash));
+                return;
+            }
             Thread tmpThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -140,20 +141,27 @@ public class FlashlightActivity extends Activity {
             Log.e("err", "Device has no camera!");
             return false;
         }
-        Camera camera = Camera.open();
-        if (camera == null) {
-            return false;
-        }
-        Camera.Parameters parameters = camera.getParameters();
+        try {
+            Camera camera = Camera.open();
+            if (camera == null) {
+                return false;
+            }
+            Camera.Parameters parameters = camera.getParameters();
 
-        if (parameters.getFlashMode() == null) {
-            return false;
-        }
+            if (parameters.getFlashMode() == null) {
+                camera.release();
+                return false;
+            }
 
-        List<String> supportedFlashModes = parameters.getSupportedFlashModes();
-        if (supportedFlashModes == null || supportedFlashModes.isEmpty() || supportedFlashModes.size() == 1
-                && supportedFlashModes.get(0).equals(Camera.Parameters.FLASH_MODE_OFF)) {
-            return false;
+            List<String> supportedFlashModes = parameters.getSupportedFlashModes();
+            if (supportedFlashModes == null || supportedFlashModes.isEmpty() || supportedFlashModes.size() == 1
+                    && supportedFlashModes.get(0).equals(Camera.Parameters.FLASH_MODE_OFF)) {
+                camera.release();
+                return false;
+            }
+            camera.release();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return true;
     }
