@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name">Old Lantern</string>
     <string name="no_flash">The lantern is very disappointed! You have no flash on your device :(</string>
+    <string name="widget_label">Old Lantern toggle</string>
 </resources>

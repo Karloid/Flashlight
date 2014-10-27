@@ -78,7 +78,6 @@ public class FlashlightActivity extends Activity {
             turnFlashOff();
             turnOffButtonImg();
         }
-
     }
 
     private void turnOffButtonImg() {
