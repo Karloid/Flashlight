@@ -3,4 +3,5 @@
     <string name="app_name">Old Lantern</string>
     <string name="no_flash">The lantern is very disappointed! You have no flash on your device :(</string>
     <string name="widget_label">Old Lantern toggle</string>
+    <string name="failed_connect_to_camera">Failed to connect to camera :(</string>
 </resources>
