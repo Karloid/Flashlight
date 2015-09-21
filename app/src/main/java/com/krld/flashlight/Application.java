@@ -21,6 +21,7 @@ public class Application extends android.app.Application {
     private boolean isCameraOn = false;
     private Camera.Parameters parametersOn;
     private Camera.Parameters parametersOff;
+    private boolean systemHasFlashLight;
 
     public static Application getInstance() {
         return instance;
@@ -32,6 +33,7 @@ public class Application extends android.app.Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
+        systemHasFlashLight = systemHasFlashLight();
     }
 
 
@@ -67,6 +69,7 @@ public class Application extends android.app.Application {
     }
 
     public boolean toggleLight() {
+        if (!systemHasFlashLight) return false;
         Exception exception = onResume();
         if (exception != null) {
             //TODO
@@ -103,6 +106,7 @@ public class Application extends android.app.Application {
     }
 
     public Exception onResume() {
+        if (!systemHasFlashLight) return null;
         if (cam == null) {
             try {
                 cam = Camera.open();
@@ -132,5 +136,9 @@ public class Application extends android.app.Application {
         Intent updateIntent = new Intent(this, WidgetProvider.class);
         updateIntent.setAction(WidgetProvider.ACTION_UPDATE);
         sendBroadcast(updateIntent);
+    }
+
+    public boolean getSystemHasFlashLight() {
+        return systemHasFlashLight;
     }
 }

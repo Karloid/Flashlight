@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.Camera;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 /**
  * Created by krld_2 on 28.10.2014.
@@ -38,7 +39,11 @@ public class WidgetProvider extends AppWidgetProvider {
         if (action.equals(ACTION_CLICKED) || action.equals(ACTION_UPDATE)) {
             //TODO
             if (action.equals(ACTION_CLICKED)) {
-                Application.getInstance().toggleLight();
+                if (!Application.getInstance().getSystemHasFlashLight()) {
+                    Toast.makeText(context, context.getResources().getString(R.string.no_flash), Toast.LENGTH_LONG).show();
+                } else {
+                    Application.getInstance().toggleLight();
+                }
             }
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             ComponentName thisAppWidget = new ComponentName(context.getPackageName(), WidgetProvider.class.getName());

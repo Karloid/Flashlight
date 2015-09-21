@@ -83,7 +83,7 @@ public class FlashlightActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        systemWithoutFlash = !Application.getInstance().systemHasFlashLight();
+        systemWithoutFlash = !Application.getInstance().getSystemHasFlashLight();
         if (systemWithoutFlash) {
             errorMessage(getResources().getString(R.string.no_flash));
             return;
