@@ -3,9 +3,9 @@
                     android:minHeight="40dp"
                     android:updatePeriodMillis="86400000"
                     android:previewImage="@drawable/hricon_light"
-                    android:initialLayout="@layout/initial_widget"
+                    android:initialLayout="@layout/widget_off"
                     android:resizeMode="horizontal|vertical"
                     android:widgetCategory="home_screen|keyguard"
-                    android:initialKeyguardLayout="@layout/initial_widget"
+                    android:initialKeyguardLayout="@layout/widget_off"
         >
 </appwidget-provider>

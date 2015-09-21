@@ -17,7 +17,7 @@ import java.util.List;
 public class Application extends android.app.Application {
 
     private static Camera cam;
-    private boolean isCameraOn;
+    private boolean isCameraOn = false;
     private Camera.Parameters parametersOn;
     private Camera.Parameters parametersOff;
 
@@ -66,6 +66,11 @@ public class Application extends android.app.Application {
     }
 
     public boolean toggleLight() {
+        Exception exception = onResume();
+        if (exception != null) {
+            //TODO
+            return false;
+        }
         if (isCameraOff()) {
             turnFlashOn();
             return true;
@@ -92,7 +97,7 @@ public class Application extends android.app.Application {
         isCameraOn = true;
     }
 
-    private boolean isCameraOff() {
+    public boolean isCameraOff() {
         return !isCameraOn;
     }
 

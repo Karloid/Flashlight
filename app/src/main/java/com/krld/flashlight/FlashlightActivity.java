@@ -1,17 +1,12 @@
 package com.krld.flashlight;
 
 import android.app.Activity;
-import android.graphics.SurfaceTexture;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
-import android.hardware.Camera;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
-
-import java.io.IOException;
 
 @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
 public class FlashlightActivity extends Activity {
@@ -21,6 +16,7 @@ public class FlashlightActivity extends Activity {
     private Drawable buttonOffImg;
     private Drawable buttonOnImg;
     private boolean systemWithoutFlash;
+    private boolean lastStateIsOn;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,23 +44,35 @@ public class FlashlightActivity extends Activity {
             errorMessage(getResources().getString(R.string.no_flash));
             return;
         }
+        Application.getInstance().toggleLight();
+        syncButtons(true);
+    }
 
-        boolean lightOn = Application.getInstance().toggleLight();
+    private void syncButtons(boolean withAnimation) {
+        boolean lightOn = !Application.getInstance().isCameraOff();
         if (lightOn) {
-            turnOnButtonImg();
+            turnOnButtonImg(withAnimation);
         } else {
-            turnOffButtonImg();
+            turnOffButtonImg(withAnimation);
         }
     }
 
-    private void turnOffButtonImg() {
+    private void turnOffButtonImg(boolean withAnimation) {
+        if (!lastStateIsOn) return;
         TransitionDrawable drawable = (TransitionDrawable) onOffButton.getDrawable();
-        drawable.reverseTransition(CROSSFADE_DURATION_MILLIS);
+        if (!withAnimation) {
+            drawable.resetTransition();
+        } else {
+            drawable.reverseTransition(CROSSFADE_DURATION_MILLIS);
+        }
+        lastStateIsOn = false;
     }
 
-    private void turnOnButtonImg() {
+    private void turnOnButtonImg(boolean withAnimation) {
+        if (lastStateIsOn) return;
         TransitionDrawable drawable = (TransitionDrawable) onOffButton.getDrawable();
-        drawable.startTransition(CROSSFADE_DURATION_MILLIS);
+        drawable.startTransition(withAnimation ? CROSSFADE_DURATION_MILLIS : 0);
+        lastStateIsOn = true;
     }
 
 
@@ -85,6 +93,8 @@ public class FlashlightActivity extends Activity {
         if (exception != null) {
             errorMessage(getString(R.string.failed_connect_to_camera));
         }
+
+        syncButtons(false);
     }
 
     @Override
