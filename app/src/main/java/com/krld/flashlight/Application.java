@@ -1,5 +1,6 @@
 package com.krld.flashlight;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.Drawable;
@@ -120,9 +121,16 @@ public class Application extends android.app.Application {
     }
 
     public void onPause() {
-        if (!isCameraOn) {
+        if (!isCameraOn && cam != null) {
             cam.release();
             cam = null;
         }
+    }
+
+    public void toggleLightFromActivity() {
+        toggleLight();
+        Intent updateIntent = new Intent(this, WidgetProvider.class);
+        updateIntent.setAction(WidgetProvider.ACTION_UPDATE);
+        sendBroadcast(updateIntent);
     }
 }

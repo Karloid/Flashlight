@@ -3,6 +3,7 @@ package com.krld.flashlight;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Camera;
@@ -13,6 +14,7 @@ import android.widget.RemoteViews;
  */
 public class WidgetProvider extends AppWidgetProvider {
     private static final String ACTION_CLICKED = "action clicked";
+    public static final String ACTION_UPDATE = "action update";
     private static Camera cam;
 
     @Override
@@ -33,12 +35,17 @@ public class WidgetProvider extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
 
         final String action = intent.getAction();
-        if (action.equals(ACTION_CLICKED)) {
+        if (action.equals(ACTION_CLICKED) || action.equals(ACTION_UPDATE)) {
             //TODO
-            Application.getInstance().toggleLight();
-            onUpdate(context, AppWidgetManager.getInstance(context), new int[]{0});
+            if (action.equals(ACTION_CLICKED)) {
+                Application.getInstance().toggleLight();
+            }
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            ComponentName thisAppWidget = new ComponentName(context.getPackageName(), WidgetProvider.class.getName());
+            int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisAppWidget);
+
+            onUpdate(context, appWidgetManager, appWidgetIds);
         }
-        //   toggleFlash();
         super.onReceive(context, intent);
     }
 }

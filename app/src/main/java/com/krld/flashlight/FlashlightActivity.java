@@ -44,7 +44,7 @@ public class FlashlightActivity extends Activity {
             errorMessage(getResources().getString(R.string.no_flash));
             return;
         }
-        Application.getInstance().toggleLight();
+        Application.getInstance().toggleLightFromActivity();
         syncButtons(true);
     }
 
