@@ -1,46 +1,68 @@
-<?xml version="1.0" encoding="utf-8"?>
-        <!--HORRIBLE-->
+<?xml version="1.0" encoding="utf-8"?><!--HORRIBLE-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-              android:background="#ff010101">
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#ff010101"
+    android:orientation="vertical">
+
     <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="New Button"
-            android:id="@+id/button2" android:layout_below="@+id/onoff_button"
-            android:layout_centerHorizontal="true" android:layout_marginTop="52dp" android:layout_weight=".1"
-            android:layout_gravity="center" android:visibility="invisible"/>
+        android:id="@+id/button2"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/onoff_button"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="52dp"
+        android:layout_weight=".1"
+        android:text="New Button"
+        android:visibility="invisible" />
+
     <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" android:layout_weight="0.3">
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.3"
+        android:orientation="horizontal">
+
         <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="New Button"
-                android:id="@+id/button3" android:layout_weight="2" android:visibility="invisible"/>
-        <ImageButton
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:id="@+id/onoff_button" android:layout_gravity="center"
-                android:focusableInTouchMode="false" android:layout_margin="0px"
-                android:background="@null" android:clickable="false"
-                android:layout_centerInParent="true" android:src="@drawable/transition" android:scaleType="fitCenter"
-                android:padding="10px" android:layout_weight="44"/>
-        <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="New Button"
-                android:id="@+id/button4" android:layout_weight="2" android:visibility="invisible"/>
-    </LinearLayout>
-    <Button
+            android:id="@+id/button3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="2"
             android:text="New Button"
-            android:id="@+id/button" android:layout_weight=".2" android:layout_gravity="center"
-            android:visibility="invisible"/>
+            android:visibility="invisible" />
+
+        <ImageButton
+            android:id="@+id/onoff_button"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:layout_margin="0px"
+            android:layout_weight="44"
+            android:background="@null"
+            android:clickable="false"
+            android:focusableInTouchMode="false"
+            android:padding="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/transition" />
+
+        <Button
+            android:id="@+id/button4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="New Button"
+            android:visibility="invisible" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight=".2"
+        android:text="New Button"
+        android:visibility="invisible" />
 </LinearLayout>
 

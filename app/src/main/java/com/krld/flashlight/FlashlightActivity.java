@@ -23,10 +23,11 @@ public class FlashlightActivity extends Activity {
     private static Camera cam;
     private Drawable buttonOffImg;
     private Drawable buttonOnImg;
+    private boolean systemWithoutFlash;
+    private boolean isCameraOn;
+    private Camera.Parameters parametersOn;
+    private Camera.Parameters parametersOff;
 
-    /**
-     * Called when the activity is first created.
-     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,29 +52,8 @@ public class FlashlightActivity extends Activity {
     private synchronized void turnOnOffLight() {
 
         if (isCameraOff()) {
-            if (!systemHasFlashLight()) {
-                errorMessage(getResources().getString(R.string.no_flash));
-                return;
-            }
-            Thread tmpThread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        turnFlashOn();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-            // dirt hack wait until flash turn on
-            tmpThread.start();
-            try {
-                Thread.sleep(0);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            turnFlashOn();
             turnOnButtonImg();
-
         } else {
             turnFlashOff();
             turnOffButtonImg();
@@ -91,43 +71,24 @@ public class FlashlightActivity extends Activity {
     }
 
     private void turnFlashOff() {
-        cam.stopPreview();
-        cam.release();
-        cam = null;
+        cam.setParameters(parametersOff);
+        isCameraOn = false;
     }
 
-    private synchronized void turnFlashOn() throws IOException {
-        boolean notConnected = true;
-        int count = 0;
-        int maxCount = 10;
-        while (notConnected) {
-            try {
-                count++;
-                if (count > maxCount) {
-                    return;
-                }
-                cam = Camera.open();
-            } catch (Exception e) {
-                try {
-                    Thread.sleep(50);
-                    continue;
-                } catch (InterruptedException e1) {
-                    e1.printStackTrace();
-                }
-            }
-            notConnected = false;
-        }
+    private synchronized void turnFlashOn() {
         if (Build.VERSION.SDK_INT >= 11) {     //honeycomb req for nexus 5
-            cam.setPreviewTexture(new SurfaceTexture(0));
+            try {
+                cam.setPreviewTexture(new SurfaceTexture(0));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        Camera.Parameters p = cam.getParameters();
-        p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-        cam.setParameters(p);
-        cam.startPreview();
+        cam.setParameters(parametersOn);
+        isCameraOn = true;
     }
 
     private boolean isCameraOff() {
-        return cam == null;
+        return !isCameraOn;
     }
 
     private void errorMessage(String message) {
@@ -168,15 +129,29 @@ public class FlashlightActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        // updateButtonDrawable();
+        systemWithoutFlash = !systemHasFlashLight();
+        if (systemWithoutFlash) {
+            errorMessage(getResources().getString(R.string.no_flash));
+            return;
+        }
+
+        if (cam == null) {
+            cam = Camera.open();
+
+            parametersOn = cam.getParameters();
+            parametersOn.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+
+            parametersOff = cam.getParameters();
+            parametersOff.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+        }
     }
 
-    private void updateButtonDrawable() {
-        TransitionDrawable drawable = (TransitionDrawable) onOffButton.getDrawable();
-        if (isCameraOff()) {
-            drawable.reverseTransition(CROSSFADE_DURATION_SHORT);
-        } else {
-            drawable.startTransition(CROSSFADE_DURATION_SHORT);
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (!isCameraOn) {
+            cam.release();
+            cam = null;
         }
     }
 }
