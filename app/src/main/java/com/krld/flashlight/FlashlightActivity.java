@@ -9,6 +9,8 @@ import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -46,6 +48,24 @@ public class FlashlightActivity extends Activity {
 
     private void showSettingsDialog() {
         View view = LayoutInflater.from(this).inflate(R.layout.settings_d, null);
+        final CheckBox turboCheckBox = (CheckBox) view.findViewById(R.id.checkbox);
+        turboCheckBox.setChecked(Application.getInstance().getInstantMode());
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                turboCheckBox.setChecked(!turboCheckBox.isChecked());
+            }
+        });
+
+        turboCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Application.getInstance().handleNewInstantMode(isChecked);
+                syncButtons(false);
+            }
+        });
+
+
         new AlertDialog.Builder(this)
                 .setView(view)
                 .show();

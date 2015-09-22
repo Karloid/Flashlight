@@ -1,13 +1,13 @@
 package com.krld.flashlight;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
-import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
 import android.os.Build;
 import android.util.Log;
-import android.widget.ImageButton;
 
 import java.io.IOException;
 import java.util.List;
@@ -17,12 +17,15 @@ import java.util.List;
  */
 public class Application extends android.app.Application {
 
+    public static final String PREFS_INSTANT_MODE = "PREFS_INSTANT_MODE";
+    public static final String PREFS_NAME = "WHATEVER";
     private static Camera cam;
     private boolean isCameraOn = false;
     private Camera.Parameters parametersOn;
     private Camera.Parameters parametersOff;
     private boolean systemHasFlashLight;
     private boolean activityForeground;
+    private boolean instantMode;
 
     public static Application getInstance() {
         return instance;
@@ -34,9 +37,10 @@ public class Application extends android.app.Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
+
+        instantMode = getBooleanFromSharedPrefs(PREFS_INSTANT_MODE);
         systemHasFlashLight = systemHasFlashLight();
     }
-
 
     public boolean systemHasFlashLight() {
         PackageManager pm = getPackageManager();
@@ -77,24 +81,28 @@ public class Application extends android.app.Application {
             return false;
         }
         if (isCameraOff()) {
-            turnFlashOn();
-            return true;
+            return turnFlashOn();
         } else {
-            turnFlashOff();
-            return false;
+            return turnFlashOff();
         }
     }
 
-    private void turnFlashOff() {
-        cam.setParameters(parametersOff);
-        cam.stopPreview();
-        isCameraOn = false;
+    private Boolean turnFlashOff() {
+        try {
+            cam.setParameters(parametersOff);
+            if (!instantMode)
+                cam.stopPreview();
+            isCameraOn = false;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if (!activityForeground) {
             onPause();
         }
+        return isCameraOn;
     }
 
-    private synchronized void turnFlashOn() {
+    private synchronized Boolean turnFlashOn() {
         if (Build.VERSION.SDK_INT >= 11) {     //honeycomb req for nexus 5
             try {
                 cam.setPreviewTexture(new SurfaceTexture(0));
@@ -102,9 +110,15 @@ public class Application extends android.app.Application {
                 e.printStackTrace();
             }
         }
-        cam.setParameters(parametersOn);
-        cam.startPreview();
-        isCameraOn = true;
+        try {
+            cam.setParameters(parametersOn);
+            if (!instantMode)
+                cam.startPreview();
+            isCameraOn = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return isCameraOn;
     }
 
     public boolean isCameraOff() {
@@ -152,5 +166,35 @@ public class Application extends android.app.Application {
     public Exception activityOnResume() {
         activityForeground = true;
         return onResume();
+    }
+
+    public boolean getInstantMode() {
+        return instantMode;
+    }
+
+    public boolean isInstantMode() {
+        return instantMode;
+    }
+
+    public void handleNewInstantMode(boolean active) {
+        if (isCameraOn) {
+            toggleLightFromActivity();
+        }
+        saveToSharedPrefs(PREFS_INSTANT_MODE, active);
+        instantMode = active;
+    }
+
+    private void saveToSharedPrefs(String key, boolean value) {
+        SharedPreferences settings;
+        settings = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean(key, value);
+        editor.commit();
+    }
+
+    private boolean getBooleanFromSharedPrefs(String key) {
+        SharedPreferences settings;
+        settings = getSharedPreferences("WHATEVER", Context.MODE_PRIVATE);
+        return settings.getBoolean(key, false);
     }
 }
