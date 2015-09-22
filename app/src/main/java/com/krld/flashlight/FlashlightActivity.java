@@ -89,7 +89,7 @@ public class FlashlightActivity extends Activity {
             return;
         }
 
-        Exception exception = Application.getInstance().onResume();
+        Exception exception = Application.getInstance().activityOnResume();
         if (exception != null) {
             errorMessage(getString(R.string.failed_connect_to_camera));
         }

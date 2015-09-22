@@ -22,6 +22,7 @@ public class Application extends android.app.Application {
     private Camera.Parameters parametersOn;
     private Camera.Parameters parametersOff;
     private boolean systemHasFlashLight;
+    private boolean activityForeground;
 
     public static Application getInstance() {
         return instance;
@@ -87,6 +88,9 @@ public class Application extends android.app.Application {
     private void turnFlashOff() {
         cam.setParameters(parametersOff);
         isCameraOn = false;
+        if (!activityForeground) {
+            onPause();
+        }
     }
 
     private synchronized void turnFlashOn() {
@@ -125,6 +129,7 @@ public class Application extends android.app.Application {
     }
 
     public void onPause() {
+        activityForeground = false;
         if (!isCameraOn && cam != null) {
             cam.release();
             cam = null;
@@ -140,5 +145,10 @@ public class Application extends android.app.Application {
 
     public boolean getSystemHasFlashLight() {
         return systemHasFlashLight;
+    }
+
+    public Exception activityOnResume() {
+        activityForeground = true;
+        return onResume();
     }
 }
