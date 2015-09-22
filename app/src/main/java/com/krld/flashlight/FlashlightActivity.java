@@ -1,9 +1,13 @@
 package com.krld.flashlight;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -24,7 +28,6 @@ public class FlashlightActivity extends Activity {
     }
 
     private void init() {
-
         onOffButton = (ImageButton) findViewById(R.id.onoff_button);
         onOffButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -32,7 +35,20 @@ public class FlashlightActivity extends Activity {
                 turnOnOffLight();
             }
         });
+        ImageButton imageButton = (ImageButton) findViewById(R.id.settings_button);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showSettingsDialog();
+            }
+        });
+    }
 
+    private void showSettingsDialog() {
+        View view = LayoutInflater.from(this).inflate(R.layout.settings_d, null);
+        new AlertDialog.Builder(this)
+                .setView(view)
+                .show();
     }
 
     private synchronized void turnOnOffLight() {
