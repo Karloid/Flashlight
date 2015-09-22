@@ -87,6 +87,7 @@ public class Application extends android.app.Application {
 
     private void turnFlashOff() {
         cam.setParameters(parametersOff);
+        cam.stopPreview();
         isCameraOn = false;
         if (!activityForeground) {
             onPause();
@@ -102,6 +103,7 @@ public class Application extends android.app.Application {
             }
         }
         cam.setParameters(parametersOn);
+        cam.startPreview();
         isCameraOn = true;
     }
 

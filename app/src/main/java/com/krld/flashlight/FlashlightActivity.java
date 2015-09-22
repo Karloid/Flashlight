@@ -13,8 +13,6 @@ public class FlashlightActivity extends Activity {
     public static final int CROSSFADE_DURATION_MILLIS = 400;
     public static final int CROSSFADE_DURATION_SHORT = 0;
     private ImageButton onOffButton;
-    private Drawable buttonOffImg;
-    private Drawable buttonOnImg;
     private boolean systemWithoutFlash;
     private boolean lastStateIsOn;
 
@@ -35,8 +33,6 @@ public class FlashlightActivity extends Activity {
             }
         });
 
-        buttonOffImg = getResources().getDrawable(R.drawable.hqicon_dark);
-        buttonOnImg = getResources().getDrawable(R.drawable.hqicon);
     }
 
     private synchronized void turnOnOffLight() {
